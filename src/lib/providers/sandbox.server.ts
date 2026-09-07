@@ -25,9 +25,12 @@ export async function runInSandbox(params: {
     return {
       stdout: execution.logs.stdout.join("\n"),
       stderr: execution.logs.stderr.join("\n"),
-      error: execution.error ? `${execution.error.name}: ${execution.error.value}` : undefined,
+      ...(execution.error
+        ? { error: `${execution.error.name}: ${execution.error.value}` }
+        : {}),
       files: [],
     };
+
   } finally {
     await sandbox.kill().catch(() => undefined);
   }
