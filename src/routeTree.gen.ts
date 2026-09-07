@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiCapabilitiesRouteImport } from './routes/api/capabilities'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicHooksRunScheduledTasksRouteImport } from './routes/api/public/hooks/run-scheduled-tasks'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,58 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksRunScheduledTasksRoute =
+  ApiPublicHooksRunScheduledTasksRouteImport.update({
+    id: '/api/public/hooks/run-scheduled-tasks',
+    path: '/api/public/hooks/run-scheduled-tasks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/hooks/run-scheduled-tasks': typeof ApiPublicHooksRunScheduledTasksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/hooks/run-scheduled-tasks': typeof ApiPublicHooksRunScheduledTasksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/capabilities': typeof ApiCapabilitiesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/public/hooks/run-scheduled-tasks': typeof ApiPublicHooksRunScheduledTasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/capabilities' | '/api/chat'
+  fullPaths:
+    | '/'
+    | '/api/capabilities'
+    | '/api/chat'
+    | '/api/public/hooks/run-scheduled-tasks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/capabilities' | '/api/chat'
-  id: '__root__' | '/' | '/api/capabilities' | '/api/chat'
+  to:
+    | '/'
+    | '/api/capabilities'
+    | '/api/chat'
+    | '/api/public/hooks/run-scheduled-tasks'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/capabilities'
+    | '/api/chat'
+    | '/api/public/hooks/run-scheduled-tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiCapabilitiesRoute: typeof ApiCapabilitiesRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicHooksRunScheduledTasksRoute: typeof ApiPublicHooksRunScheduledTasksRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/run-scheduled-tasks': {
+      id: '/api/public/hooks/run-scheduled-tasks'
+      path: '/api/public/hooks/run-scheduled-tasks'
+      fullPath: '/api/public/hooks/run-scheduled-tasks'
+      preLoaderRoute: typeof ApiPublicHooksRunScheduledTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +120,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiCapabilitiesRoute: ApiCapabilitiesRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicHooksRunScheduledTasksRoute: ApiPublicHooksRunScheduledTasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
