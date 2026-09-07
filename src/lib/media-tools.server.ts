@@ -31,7 +31,7 @@ export const generateImageTool = tool({
     size: z.string().optional().describe("ex: 1024x1024"),
     provider: z.string().optional().describe("auto, openai, gemini, huggingface, lovable"),
   }),
-  execute: async (input) => attempt("la génération d'image", () => generateImage(input)),
+  execute: async (input) => attempt("la génération d'image", () => generateImage(input as Parameters<typeof generateImage>[0])),
 });
 
 export const generateVideoTool = tool({
@@ -42,7 +42,7 @@ export const generateVideoTool = tool({
     durationSeconds: z.number().optional(),
     provider: z.string().optional().describe("auto, runway, replicate"),
   }),
-  execute: async (input) => attempt("la génération de vidéo", () => generateVideo(input)),
+  execute: async (input) => attempt("la génération de vidéo", () => generateVideo(input as Parameters<typeof generateVideo>[0])),
 });
 
 export const generateMusicTool = tool({
@@ -52,7 +52,7 @@ export const generateMusicTool = tool({
     durationSeconds: z.number().optional(),
     provider: z.string().optional(),
   }),
-  execute: async (input) => attempt("la génération de musique", () => generateMusic(input)),
+  execute: async (input) => attempt("la génération de musique", () => generateMusic(input as Parameters<typeof generateMusic>[0])),
 });
 
 export const textToSpeechTool = tool({
@@ -62,7 +62,7 @@ export const textToSpeechTool = tool({
     voiceId: z.string().optional(),
     provider: z.string().optional(),
   }),
-  execute: async (input) => attempt("la synthèse vocale", () => synthesizeSpeech(input)),
+  execute: async (input) => attempt("la synthèse vocale", () => synthesizeSpeech(input as Parameters<typeof synthesizeSpeech>[0])),
 });
 
 export const createPodcastTool = tool({
@@ -75,7 +75,7 @@ export const createPodcastTool = tool({
     ),
     provider: z.string().optional(),
   }),
-  execute: async (input) => attempt("le podcast", () => synthesizePodcast(input)),
+  execute: async (input) => attempt("le podcast", () => synthesizePodcast(input as Parameters<typeof synthesizePodcast>[0])),
 });
 
 export const createPresentationTool = tool({
@@ -91,7 +91,7 @@ export const createPresentationTool = tool({
       }),
     ),
   }),
-  execute: async (input) => attempt("la présentation PowerPoint", () => buildPresentation(input)),
+  execute: async (input) => attempt("la présentation PowerPoint", () => buildPresentation(input as Parameters<typeof buildPresentation>[0])),
 });
 
 export const rememberTool = tool({
@@ -102,13 +102,13 @@ export const rememberTool = tool({
     tags: z.array(z.string()).optional(),
     importance: z.number().optional(),
   }),
-  execute: async (input) => attempt("la mémoire persistante", () => rememberFact(input)),
+  execute: async (input) => attempt("la mémoire persistante", () => rememberFact(input as Parameters<typeof rememberFact>[0])),
 });
 
 export const recallTool = tool({
   description: "Retrouve dans la mémoire longue durée les informations liées à une question.",
   inputSchema: z.object({ query: z.string(), limit: z.number().optional() }),
-  execute: async (input) => attempt("la lecture de la mémoire", () => recallFacts(input)),
+  execute: async (input) => attempt("la lecture de la mémoire", () => recallFacts(input as Parameters<typeof recallFacts>[0])),
 });
 
 export const runCodeTool = tool({
