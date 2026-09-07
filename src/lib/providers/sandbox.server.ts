@@ -4,6 +4,7 @@ export type SandboxRun = {
   stdout: string;
   stderr: string;
   error?: string;
+  images: string[];
   files: Array<{ path: string; url?: string }>;
   previewUrl?: string;
 };
@@ -22,14 +23,19 @@ export async function runInSandbox(params: {
       language: params.language === "javascript" ? "js" : "python",
       timeoutMs: params.timeoutMs ?? 120_000,
     });
+    const images = (execution.results ?? [])
+      .map((r) => (r as { png?: string }).png)
+      .filter((p): p is string => typeof p === "string");
     return {
       stdout: execution.logs.stdout.join("\n"),
       stderr: execution.logs.stderr.join("\n"),
       ...(execution.error
         ? { error: `${execution.error.name}: ${execution.error.value}` }
         : {}),
+      images,
       files: [],
     };
+
 
   } finally {
     await sandbox.kill().catch(() => undefined);
