@@ -64,16 +64,42 @@ async function hfImage({ prompt }: Gen) {
   return { bytes: buf, mimeType: "image/png" };
 }
 
+/** Passerelle Lovable AI (aucune clé fournisseur à saisir). */
+async function lovableImage({ prompt }: Gen) {
+  const key = optionalEnv("LOVABLE_API_KEY");
+  if (!key) throw new Error("LOVABLE_API_KEY absente");
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: "google/gemini-3-pro-image",
+      messages: [{ role: "user", content: prompt }],
+      modalities: ["image", "text"],
+    }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Passerelle Lovable [${res.status}] ${text.slice(0, 400)}`);
+  const data = JSON.parse(text) as { data?: Array<{ b64_json?: string }> };
+  const b64 = data.data?.[0]?.b64_json;
+  if (!b64) throw new Error("La passerelle n'a renvoyé aucune image");
+  return { bytes: b64ToBytes(b64), mimeType: "image/png" };
+}
+
 const PROVIDERS: Record<string, (g: Gen) => Promise<{ bytes: Uint8Array; mimeType: string }>> = {
   openai: openaiImage,
   gemini: geminiImage,
   huggingface: hfImage,
+  lovable: lovableImage,
 };
 
 export const IMAGE_PROVIDERS = Object.keys(PROVIDERS);
 
 export async function generateImage(gen: Gen): Promise<StoredAsset & { fallbacks?: unknown }> {
-  const order = gen.provider && gen.provider !== "auto" ? [gen.provider] : ["openai", "gemini", "huggingface"];
+  const order =
+    gen.provider && gen.provider !== "auto"
+      ? [gen.provider, ...["openai", "gemini", "huggingface", "lovable"].filter((p) => p !== gen.provider)]
+      : ["openai", "gemini", "huggingface", "lovable"];
+
   const result = await withFallback(
     "la génération d'image",
     order
